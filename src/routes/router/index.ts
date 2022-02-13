@@ -1,0 +1,12 @@
+export { default as userRouter } from "./user/userRouter";
+export { default as brandRouter } from "./auto/brandRouter";
+export { default as modelRouter } from "./auto/modelRouter";
+export { default as generationRouter } from "./auto/generationRouter";
+export { default as bodyStyleRouter } from "./auto/bodyStyleRouter";
+export { default as autoRouter } from "./auto/autoRouter";
+export { default as towbarRouter } from "./catalog/towbarRouter";
+export { default as wiringKitRouter } from "./catalog/wiringKitRouter";
+export { default as accessoryRouter } from "./catalog/accessoryRouter";
+export { default as manufacturerRouter } from "./manufacturer/manufacturerRouter";
+export { default as socketRouter } from "./socket/socketRouter";
+export { default as orderRouter } from "./order/orderRouter";
