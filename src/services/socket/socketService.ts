@@ -1,6 +1,3 @@
-
 export default class SocketService {
-  static async getAll() {
-
-  }
+  static async getAll() {}
 }

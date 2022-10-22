@@ -7,5 +7,6 @@ const router = express.Router();
 router.post("/", checkRole("ADMIN"), manufacturerController.create);
 router.get("/", manufacturerController.getAll);
 router.get("/:id", manufacturerController.getOne);
+router.get("/byName/:name", manufacturerController.getByName);
 
 export default router;

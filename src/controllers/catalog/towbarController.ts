@@ -1,6 +1,5 @@
 import path from "path";
 import { Towbar } from "../../database/models/models";
-import modelService from "../../services/catalog/towbarService";
 import ApiError from "../../errors/ApiError";
 import TowbarService from "../../services/catalog/towbarService";
 
@@ -61,7 +60,7 @@ export default class TowbarController {
 
   static async getAll(req, res, next) {
     try {
-      const { carId, page = 1, limit = 8, options } = req.body;
+      const { carId, page = 1, limit = 4, options } = req.body;
       const offset = page * limit - limit;
       const towbars = await TowbarService.findAndCountAll(
         carId,
@@ -71,6 +70,7 @@ export default class TowbarController {
       );
       return res.json(towbars);
     } catch (e) {
+      console.log(e);
       next(e);
     }
   }

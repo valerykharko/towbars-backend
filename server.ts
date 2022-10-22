@@ -14,13 +14,18 @@ const server = express();
 const app = require("http").Server(server);
 const io = require("socket.io")(app, {
   cors: {
-    origin: process.env.CLIENT_URL,
+    origin: [process.env.CLIENT_URL, process.env.CLIENT_NATIVE_URL],
   },
 });
 
 server.use(express.json());
 server.use(cookieParser());
-server.use(cors({ credentials: true, origin: process.env.CLIENT_URL }));
+server.use(
+  cors({
+    credentials: true,
+    origin: [process.env.CLIENT_URL, process.env.CLIENT_NATIVE_URL],
+  })
+);
 server.use(express.urlencoded({ extended: false }));
 server.use(
   express.static(path.resolve(__dirname, "src/database/static/documents"))

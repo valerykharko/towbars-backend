@@ -31,4 +31,14 @@ export default class ManufacturerController {
       next(e);
     }
   }
+
+  static async getByName(req, res, next) {
+    try {
+      const { name } = req.params;
+      const manufacturer = await manufacturerService.getOneByName(name);
+      return res.json(manufacturer);
+    } catch (e) {
+      next(e);
+    }
+  }
 }

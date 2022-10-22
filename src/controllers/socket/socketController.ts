@@ -1,6 +1,5 @@
 import { rooms } from "../../../server";
 import ApiError from "../../errors/ApiError";
-import manufacturerService from "../../services/manufacturer/manufacturerService";
 
 export default class SocketController {
   static async createRoom(req, res, next) {

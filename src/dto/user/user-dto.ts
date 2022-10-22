@@ -4,8 +4,9 @@ export default class UserDto {
   email;
   phoneNumber;
   role;
-  id;
   isActivated;
+  id;
+  autoId;
 
   constructor(model) {
     this.firstName = model.firstName;
@@ -15,5 +16,6 @@ export default class UserDto {
     this.role = model.role;
     this.id = model.id;
     this.isActivated = model.isActivated;
+    this.autoId = model.autoId;
   }
 }

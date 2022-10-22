@@ -31,6 +31,7 @@ export const Order: any = sequelize.define("order", {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
   items: { type: DataTypes.ARRAY(Sequelize.JSON), allowNull: false },
   date: { type: DataTypes.DATE, allowNull: false, defaultValue: Date.now() },
+  status: { type: DataTypes.STRING, allowNull: false },
   firstName: { type: DataTypes.STRING, allowNull: false },
   secondName: { type: DataTypes.STRING, allowNull: false },
   phoneNumber: { type: DataTypes.STRING, allowNull: false },
@@ -77,14 +78,24 @@ export const Towbar: any = sequelize.define("towbar", {
 
 export const WiringKit: any = sequelize.define("wiring_kit", {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
-  brandWK: { type: DataTypes.STRING, allowNull: false },
-  country: { type: DataTypes.STRING, allowNull: false },
   vendor_code: { type: DataTypes.STRING, allowNull: false },
   pin: { type: DataTypes.STRING, allowNull: false },
+  price: { type: DataTypes.FLOAT, allowNull: false },
+  connection_time: { type: DataTypes.STRING, allowNull: true },
+  weight: { type: DataTypes.FLOAT, allowNull: true },
+  turn_control: { type: DataTypes.STRING, allowNull: true },
+  disable_parking_sensors: { type: DataTypes.STRING, allowNull: true },
+  CAN_bus: { type: DataTypes.STRING, allowNull: true },
+  activation: { type: DataTypes.STRING, allowNull: true },
+  encoding: { type: DataTypes.STRING, allowNull: true },
+  permanent_plus: { type: DataTypes.STRING, allowNull: true },
+  charger: { type: DataTypes.STRING, allowNull: true },
+  with_block: { type: DataTypes.STRING, allowNull: true },
   img: { type: DataTypes.ARRAY(Sequelize.STRING), allowNull: true },
   doc: { type: DataTypes.ARRAY(Sequelize.STRING), allowNull: true },
-  price: { type: DataTypes.FLOAT, allowNull: true },
-  description: { type: DataTypes.STRING, allowNull: false },
+  video_link: { type: DataTypes.ARRAY(Sequelize.STRING), allowNull: true },
+  description: { type: DataTypes.STRING(3000), allowNull: true },
+  note: { type: DataTypes.FLOAT, allowNull: true },
 });
 
 export const Accessory: any = sequelize.define("accessory", {
@@ -127,7 +138,7 @@ export const BodyStyle: any = sequelize.define("body_style", {
 
 export const Rating: any = sequelize.define("rating", {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
-  rate: { type: DataTypes.INTEGER, allowNull: false },
+  rating: { type: DataTypes.FLOAT, allowNull: false, defaultValue: 0 },
 });
 
 export const Manufacturer: any = sequelize.define("manufacturer", {
@@ -137,6 +148,21 @@ export const Manufacturer: any = sequelize.define("manufacturer", {
   img: { type: DataTypes.ARRAY(Sequelize.STRING), allowNull: true },
   doc: { type: DataTypes.ARRAY(Sequelize.STRING), allowNull: true },
   description: { type: DataTypes.STRING(3000), allowNull: true },
+  text: { type: DataTypes.STRING(20000), allowNull: true },
+  link: { type: DataTypes.STRING(20000), allowNull: true },
+});
+
+export const UsersFavorites = sequelize.define("users_favorites", {
+  id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
+});
+
+export const UsersRatings = sequelize.define("users_ratings", {
+  id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
+  title: { type: DataTypes.STRING(50), allowNull: false },
+  text: { type: DataTypes.STRING(20000), allowNull: false },
+  value: { type: DataTypes.INTEGER, allowNull: false },
+  img: { type: DataTypes.ARRAY(Sequelize.STRING), allowNull: true },
+  date: { type: DataTypes.DATE, allowNull: false, defaultValue: Date.now() },
 });
 
 User.hasOne(Token);
@@ -145,20 +171,14 @@ Token.belongsTo(User);
 User.hasMany(Order);
 Order.belongsTo(User);
 
+Auto.hasOne(User);
+User.belongsTo(Auto);
+
 User.hasOne(Basket);
 Basket.belongsTo(User);
 
-User.hasMany(Rating);
-Rating.belongsTo(User);
-
-Towbar.hasMany(Rating);
+Towbar.hasOne(Rating);
 Rating.belongsTo(Towbar);
-
-WiringKit.hasMany(Rating);
-Rating.belongsTo(WiringKit);
-
-Accessory.hasMany(Rating);
-Rating.belongsTo(Accessory);
 
 Basket.hasMany(BasketItems);
 BasketItems.belongsTo(Basket);
@@ -207,3 +227,9 @@ WiringKit.belongsTo(Manufacturer);
 
 Manufacturer.hasMany(Accessory);
 Accessory.belongsTo(Accessory);
+
+User.belongsToMany(Towbar, { through: UsersFavorites });
+Towbar.belongsToMany(User, { through: UsersFavorites });
+
+User.belongsToMany(Rating, { through: UsersRatings });
+Rating.belongsToMany(User, { through: UsersRatings });

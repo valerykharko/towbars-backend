@@ -12,6 +12,10 @@ import {
   bodyStyleRouter,
   socketRouter,
   orderRouter,
+  mailRouter,
+  favoritesRouter,
+  ratingsRouter,
+  statisticsRouter,
 } from "./router";
 
 const router = express.Router();
@@ -28,5 +32,9 @@ router.use("/autos/body-styles", bodyStyleRouter);
 router.use("/autos", autoRouter);
 router.use("/sockets", socketRouter);
 router.use("/orders", orderRouter);
+router.use("/mails", mailRouter);
+router.use("/favorites", favoritesRouter);
+router.use("/ratings", ratingsRouter);
+router.use("/statistics", statisticsRouter);
 
 export default router;

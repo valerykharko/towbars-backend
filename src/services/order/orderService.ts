@@ -16,6 +16,7 @@ export default class OrderService {
     }
     return await Order.create({
       items: result,
+      status: "Новый заказ",
       totalPrice,
       totalCount,
       firstName,

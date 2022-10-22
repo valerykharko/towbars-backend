@@ -1,6 +1,7 @@
 import express from "express";
 import jwt from "jsonwebtoken";
 import { validationResult } from "express-validator";
+import tokenService from "../../services/user/tokenService";
 import userService from "../../services/user/userService";
 import ApiError from "../../errors/ApiError";
 
@@ -111,6 +112,52 @@ export default class UserController {
     }
   }
 
+  static async isValidToken(
+    req: express.Request,
+    res: express.Response,
+    next: express.NextFunction
+  ) {
+    try {
+      const { refreshToken } = req.cookies;
+      if (!refreshToken) {
+        return res.json(false);
+      }
+      const userData = await tokenService.validateRefreshToken(refreshToken);
+      if (!userData) {
+        return res.json(false);
+      }
+      const isValid = await userService.isValidRefreshToken(
+        userData.id,
+        refreshToken
+      );
+      return res.json(isValid);
+    } catch (e) {
+      console.log(e);
+      next(e);
+    }
+  }
+
+  static async isAdmin(
+    req: express.Request,
+    res: express.Response,
+    next: express.NextFunction
+  ) {
+    try {
+      const { refreshToken } = req.cookies;
+      if (!refreshToken) {
+        return res.json(false);
+      }
+      const userData = await tokenService.validateRefreshToken(refreshToken);
+      if (!userData) {
+        return res.json(false);
+      }
+      const isAdmin = await userService.isAdminToken(userData.id, refreshToken);
+      return res.json(isAdmin);
+    } catch (e) {
+      next(e);
+    }
+  }
+
   static async editUser(
     req: express.Request,
     res: express.Response,
@@ -126,6 +173,45 @@ export default class UserController {
         phoneNumber,
         id
       );
+      return res.json(user);
+    } catch (e) {
+      console.log(e);
+      next(e);
+    }
+  }
+
+  static async updateUserAuto(
+    req: express.Request,
+    res: express.Response,
+    next: express.NextFunction
+  ) {
+    try {
+      const { brand, model, generation, body_style } = req.body;
+      const token = req.headers.authorization.split(" ")[1];
+      const { id } = jwt.verify(token, process.env.JWT_ACCESS_SECRET);
+      const user = await userService.setAuto(
+        brand,
+        model,
+        generation,
+        body_style,
+        id
+      );
+      return res.json(user);
+    } catch (e) {
+      console.log(e);
+      next(e);
+    }
+  }
+
+  static async removeUserAuto(
+    req: express.Request,
+    res: express.Response,
+    next: express.NextFunction
+  ) {
+    try {
+      const token = req.headers.authorization.split(" ")[1];
+      const { id } = jwt.verify(token, process.env.JWT_ACCESS_SECRET);
+      const user = await userService.removeAuto(id);
       return res.json(user);
     } catch (e) {
       console.log(e);

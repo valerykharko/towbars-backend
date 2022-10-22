@@ -1,6 +1,9 @@
+import TowbarService from "../../services/catalog/towbarService";
+
 const path = require("path");
 import { WiringKit } from "../../database/models/models";
 import ApiError from "../../errors/ApiError";
+import WiringKitService from "../../services/catalog/wiringKitService";
 
 export default class WiringKitController {
   static async create(req, res, next) {
@@ -51,45 +54,21 @@ export default class WiringKitController {
     }
   }
 
-  static async getAll(req, res) {
-    let { brandId, modelId, generationId, bodyStyleId, limit, page } =
-      req.query;
-    page = page || 1;
-    limit = limit || 5;
-    let offset = page * limit - limit;
-    let wiring_kits;
-    if (!brandId && !modelId && !generationId && !bodyStyleId) {
-      wiring_kits = await WiringKit.findAndCountAll({ limit, offset });
-    }
-    if (brandId && !modelId && !generationId && !bodyStyleId) {
-      wiring_kits = await WiringKit.findAndCountAll({
-        where: { brandId },
+  static async getAll(req, res, next) {
+    try {
+      const { carId, page = 1, limit = 8, options } = req.body;
+      const offset = page * limit - limit;
+      const wiringKits = await WiringKitService.findAndCountAll(
+        carId,
         limit,
         offset,
-      });
+        options
+      );
+      return res.json(wiringKits);
+    } catch (e) {
+      console.log(e);
+      next(e);
     }
-    if (brandId && modelId && !generationId && !bodyStyleId) {
-      wiring_kits = await WiringKit.findAndCountAll({
-        where: { brandId, modelId },
-        limit,
-        offset,
-      });
-    }
-    if (brandId && modelId && generationId && !bodyStyleId) {
-      wiring_kits = await WiringKit.findAndCountAll({
-        where: { brandId, modelId, generationId },
-        limit,
-        offset,
-      });
-    }
-    if (brandId && modelId && generationId && bodyStyleId) {
-      wiring_kits = await WiringKit.findAndCountAll({
-        where: { brandId, modelId, generationId, bodyStyleId },
-        limit,
-        offset,
-      });
-    }
-    return res.json(wiring_kits);
   }
 
   static async getOne(req, res) {

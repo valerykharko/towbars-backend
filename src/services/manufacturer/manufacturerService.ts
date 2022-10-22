@@ -8,4 +8,8 @@ export default class ManufacturerService {
   static async getOneById(id) {
     return await Manufacturer.findByPk(id);
   }
+
+  static async getOneByName(name) {
+    return await Manufacturer.findOne({ where: { name } });
+  }
 }
