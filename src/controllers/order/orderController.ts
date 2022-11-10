@@ -5,23 +5,14 @@ import ApiError from "../../errors/ApiError";
 export default class OrderController {
   static async create(req, res, next) {
     try {
-      const {
-        items,
-        totalPrice,
-        totalCount,
-        firstName,
-        secondName,
-        phoneNumber,
-      } = req.body;
+      const { items, userData, totalPrice, totalCount } = req.body;
       const token = req.headers.authorization.split(" ")[1];
       const { id } = jwt.verify(token, process.env.JWT_ACCESS_SECRET);
       const order = await orderService.createOne(
         items,
+        userData,
         totalPrice,
         totalCount,
-        firstName,
-        secondName,
-        phoneNumber,
         id
       );
       return res.json(order);

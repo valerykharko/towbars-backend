@@ -1,12 +1,12 @@
 import express from "express";
 import checkRole from "../../../middlewares/checkRoleMiddleware";
 import brandController from "../../../controllers/auto/brandController";
-import authMiddleware from "../../../middlewares/authMiddleware";
 
 const router = express.Router();
 
 router.post("/", checkRole("ADMIN"), brandController.create);
-router.get("/", authMiddleware, brandController.getAll);
-router.get("/:id", brandController.getOne);
+router.get("/:id", checkRole("ADMIN"), brandController.getOne);
+router.patch("/:id", checkRole("ADMIN"), brandController.patchOne);
+router.get("/", brandController.getAll);
 
 export default router;

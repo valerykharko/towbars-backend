@@ -2,6 +2,7 @@ import path from "path";
 import { Towbar } from "../../database/models/models";
 import ApiError from "../../errors/ApiError";
 import TowbarService from "../../services/catalog/towbarService";
+import generationService from "../../services/auto/generationService";
 
 export default class TowbarController {
   static async create(req, res, next) {
@@ -60,18 +61,11 @@ export default class TowbarController {
 
   static async getAll(req, res, next) {
     try {
-      const { carId, page = 1, limit = 4, options } = req.body;
-      const offset = page * limit - limit;
-      const towbars = await TowbarService.findAndCountAll(
-        carId,
-        limit,
-        offset,
-        options
-      );
+      const { carId } = req.body;
+      const towbars = await TowbarService.findAll(carId);
       return res.json(towbars);
     } catch (e) {
-      console.log(e);
-      next(e);
+      next(ApiError.BadRequest(e.message));
     }
   }
 
@@ -85,14 +79,35 @@ export default class TowbarController {
     }
   }
 
+  static async patchOne(req, res, next) {
+    try {
+      const { id } = req.params;
+      const { payload } = req.body;
+      const towbar = await TowbarService.editTowbar(id, payload);
+      return res.json(towbar);
+    } catch (e) {
+      next(ApiError.BadRequest(e.message));
+    }
+  }
+
+  static async patchAllPrice(req, res, next) {
+    try {
+      const { payload } = req.body;
+      console.log(payload)
+      const towbars = await TowbarService.editAllTowbarsPrice(payload);
+      return res.json(towbars);
+    } catch (e) {
+      next(ApiError.BadRequest(e.message));
+    }
+  }
+
   static async getByCode(req, res, next) {
     try {
       const { vendor_code } = req.query;
       const towbars = await TowbarService.findAllByCode(vendor_code);
       return res.json(towbars);
     } catch (e) {
-      console.log(e);
-      next(e);
+      next(ApiError.BadRequest(e.message));
     }
   }
 }

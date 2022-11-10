@@ -6,131 +6,40 @@ import {
   Generation,
   Manufacturer,
   Model,
-  Rating,
   Towbar,
 } from "../../database/models/models";
 
 export default class TowbarService {
-  static async findAndCountAll(carId, limit, offset, options) {
-    try {
-      const cutOut = options.isBumperCutOut === true ? "Да" : "Нет";
+  static async findAll(autoId) {
+    const towbars = await Towbar.findAll({
+      where: { autoId, visible: true },
+      order: [sequelize.literal("price DESC")],
+    });
 
-      const sortBy =
-        options.sortValue === "Сначала дорогие"
-          ? "max(price) DESC"
-          : options.sortValue === "Сначала дешевые"
-          ? "max(price)"
-          : "";
+    return await Promise.all(
+      towbars.map(async (elem) => {
+        const autoData = await Auto.findByPk(elem.autoId);
+        const brandData = await Brand.findByPk(autoData.brandId);
+        const modelData = await Model.findByPk(autoData.modelId);
+        const generationData = await Generation.findByPk(autoData.generationId);
+        const bodyStyleData = await BodyStyle.findByPk(autoData.bodyStyleId);
 
-      const where1 =
-        options.manufacturers.length !== 0
-          ? {
-              cutout: cutOut,
-              autoId: carId,
-              price: {
-                [Op.gte]: options.price[0],
-                [Op.lte]: options.price[1],
-              },
-              manufacturerId: {
-                [Op.in]: options.manufacturers,
-              },
-            }
-          : {
-              cutout: cutOut,
-              autoId: carId,
-              price: {
-                [Op.gte]: options.price[0],
-                [Op.lte]: options.price[1],
-              },
-            };
+        const manufacturerData = await Manufacturer.findByPk(
+          elem.manufacturerId
+        );
 
-      const where2 =
-        options.manufacturers.length !== 0
-          ? {
-              cutout: cutOut,
-              price: {
-                [Op.gte]: options.price[0],
-                [Op.lte]: options.price[1],
-              },
-              manufacturerId: {
-                [Op.in]: options.manufacturers,
-              },
-            }
-          : {
-              cutout: cutOut,
-              price: {
-                [Op.gte]: options.price[0],
-                [Op.lte]: options.price[1],
-              },
-            };
-
-      const towbars = sortBy
-        ? carId
-          ? await Towbar.findAndCountAll({
-              where: where1,
-              order: sequelize.literal(sortBy),
-              group: ["id"],
-            })
-          : await Towbar.findAndCountAll({
-              where: where2,
-              limit,
-              offset,
-              order: sequelize.literal(sortBy),
-              group: ["id"],
-            })
-        : carId
-        ? await Towbar.findAndCountAll({
-            where: where1,
-          })
-        : await Towbar.findAndCountAll({
-            where: where2,
-            limit,
-            offset,
-          });
-
-      const data = await Promise.all(
-        towbars.rows.map(async (elem) => {
-          const ratingData = await Rating.findOne({
-            where: { towbarId: elem.id },
-          });
-
-          const autoData = await Auto.findByPk(elem.autoId);
-          const brandData = await Brand.findByPk(autoData.brandId);
-          const modelData = await Model.findByPk(autoData.modelId);
-          const generationData = await Generation.findByPk(
-            autoData.generationId
-          );
-          const bodyStyleData = await BodyStyle.findByPk(autoData.bodyStyleId);
-
-          const manufacturerData = await Manufacturer.findByPk(
-            elem.manufacturerId
-          );
-
-          return {
-            ...elem,
-            ratingValue: ratingData.rating,
-            manufacturer: manufacturerData,
-            auto: {
-              brand: brandData,
-              model: modelData,
-              generation: generationData,
-              bodyStyle: bodyStyleData,
-            },
-          };
-        })
-      );
-
-      return {
-        rows: sortBy
-          ? data
-          : data.sort(function (a: any, b: any) {
-              return parseFloat(b.ratingValue) - parseFloat(a.ratingValue);
-            }),
-        count: sortBy ? towbars.count.length : towbars.count,
-      };
-    } catch (e) {
-      console.log(e);
-    }
+        return {
+          ...elem,
+          manufacturer: manufacturerData,
+          auto: {
+            brand: brandData,
+            model: modelData,
+            generation: generationData,
+            bodyStyle: bodyStyleData,
+          },
+        };
+      })
+    );
   }
 
   static async findOne(towbarId) {
@@ -165,5 +74,46 @@ export default class TowbarService {
         },
       },
     });
+  }
+
+  static async editTowbar(id, payload) {
+    const options = {
+      ...(payload.visible && { visible: payload.visible }),
+      ...(payload.price && { price: payload.price }),
+    };
+    await Towbar.update(options, { where: { id: id } });
+
+    return await Towbar.findByPk(id);
+  }
+
+  static async editAllTowbarsPrice(payload) {
+    try {
+      const count = Number(payload);
+
+      await Towbar.update(
+        {
+          price: sequelize.fn(
+            "ROUND",
+            sequelize.literal(`price * ${count}`),
+            -2
+          ),
+        },
+        {
+          where: {
+            id: {
+              [Op.gt]: 0,
+            },
+          },
+        }
+      );
+
+      return await Towbar.findAll({
+        where: { visible: true },
+        order: [sequelize.literal("price DESC")],
+        limit: 10,
+      });
+    } catch (e) {
+      console.log(e);
+    }
   }
 }

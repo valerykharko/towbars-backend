@@ -1,21 +1,25 @@
 export default class UserDto {
   firstName;
   secondName;
-  email;
+  patronymic;
+  country;
+  city;
   phoneNumber;
+  email;
   role;
   isActivated;
   id;
-  autoId;
 
   constructor(model) {
     this.firstName = model.firstName;
     this.secondName = model.secondName;
-    this.email = model.email;
+    this.patronymic = model.patronymic;
+    this.country = model.country;
+    this.city = model.city;
     this.phoneNumber = model.phoneNumber;
+    this.email = model.email;
     this.role = model.role;
-    this.id = model.id;
     this.isActivated = model.isActivated;
-    this.autoId = model.autoId;
+    this.id = model.id;
   }
 }

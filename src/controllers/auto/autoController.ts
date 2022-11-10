@@ -6,16 +6,20 @@ export default class AutoController {
   static async create(req, res, next) {
     try {
       const { name } = req.body;
-      const brand = await Auto.create({ name });
-      return res.json(brand);
+      const auto = await Auto.create({ name });
+      return res.json(auto);
     } catch (e) {
       next(ApiError.BadRequest(e.message));
     }
   }
 
-  static async getAll(req, res) {
-    const brands = await Auto.findAll();
-    return res.json(brands);
+  static async getAll(req, res, next) {
+    try {
+      const autos = await Auto.findAll();
+      return res.json(autos);
+    } catch (e) {
+      next(ApiError.BadRequest(e.message));
+    }
   }
 
   static async getOne(req, res, next) {
@@ -29,7 +33,7 @@ export default class AutoController {
       );
       return res.json(auto);
     } catch (e) {
-      next(e);
+      next(ApiError.BadRequest(e.message));
     }
   }
 
@@ -39,7 +43,7 @@ export default class AutoController {
       const auto = await autoService.getById(id);
       return res.json(auto);
     } catch (e) {
-      next(e);
+      next(ApiError.BadRequest(e.message));
     }
   }
 }

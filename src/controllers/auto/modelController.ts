@@ -1,6 +1,7 @@
 import { Model } from "../../database/models/models";
 import modelService from "../../services/auto/modelService";
 import ApiError from "../../errors/ApiError";
+import brandService from "../../services/auto/brandService";
 
 export default class ModelController {
   static async create(req, res, next) {
@@ -19,15 +20,28 @@ export default class ModelController {
       const models = await modelService.getAllModels(Number(brandId));
       return res.json(models);
     } catch (e) {
-      next(e);
+      next(ApiError.BadRequest(e.message));
     }
   }
 
-  static async getOne(req, res) {
-    const { id } = req.params;
-    const model = await Model.findOne({
-      where: { id },
-    });
-    return res.json(model);
+  static async getOne(req, res, next) {
+    try {
+      const { id } = req.params;
+      const model = await modelService.getModelById(id);
+      return res.json(model);
+    } catch (e) {
+      next(ApiError.BadRequest(e.message));
+    }
+  }
+
+  static async patchOne(req, res, next) {
+    try {
+      const { id } = req.params;
+      const { value } = req.body;
+      const model = await modelService.editModel(id, value);
+      return res.json(model);
+    } catch (e) {
+      next(ApiError.BadRequest(e.message));
+    }
   }
 }

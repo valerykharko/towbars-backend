@@ -171,104 +171,25 @@ export default class UserService {
     return data.refreshToken === refreshToken && user.role === "ADMIN";
   }
 
-  static async editInfo(firstName, secondName, phoneNumber, id) {
-    let options = {};
-    firstName && secondName && phoneNumber
-      ? (options = {
-          firstName,
-          secondName,
-          phoneNumber,
-        })
-      : firstName && options
-      ? (options = {
-          firstName,
-          secondName,
-        })
-      : firstName
-      ? (options = {
-          firstName,
-        })
-      : secondName
-      ? (options = {
-          secondName,
-        })
-      : phoneNumber
-      ? (options = {
-          phoneNumber,
-        })
-      : "";
+  static async editInfo(
+    firstName,
+    secondName,
+    patronymic,
+    country,
+    city,
+    phoneNumber,
+    id
+  ) {
+    const options = {
+      ...(firstName && { firstName: firstName }),
+      ...(secondName && { secondName: secondName }),
+      ...(patronymic && { patronymic: patronymic }),
+      ...(country && { country: country }),
+      ...(city && { city: city }),
+      ...(phoneNumber && { phoneNumber: phoneNumber }),
+    };
 
     await User.update(options, { where: { id: id } });
-
-    const user = await User.findByPk(id);
-
-    const auto = await Auto.findByPk(user.autoId);
-
-    const brandData = await Brand.findByPk(auto.brandId);
-    const modelData = await Model.findByPk(auto.modelId);
-    const generationData = await Generation.findByPk(auto.generationId);
-    const bodyStyleData = await BodyStyle.findByPk(auto.bodyStyleId);
-
-    const image = auto.img;
-
-    return {
-      ...user,
-      user_auto: {
-        brand: brandData.name,
-        model: modelData.name,
-        generation: generationData.name,
-        body_style: bodyStyleData.name,
-        img: image,
-      },
-    };
-  }
-
-  static async setAuto(brand, model, generation, body_style, id) {
-    const brandData = await Brand.findOne({
-      where: { name: brand },
-    });
-
-    const modelData = await Model.findOne({
-      where: { name: model },
-    });
-
-    const generationData = await Generation.findOne({
-      where: { name: generation },
-    });
-
-    const body_styleData = await BodyStyle.findOne({
-      where: { name: body_style },
-    });
-
-    const auto = await Auto.findOne({
-      where: {
-        brandId: brandData.id,
-        modelId: modelData.id,
-        generationId: generationData.id,
-        bodyStyleId: body_styleData.id,
-      },
-    });
-
-    await User.update({ autoId: Number(auto.id) }, { where: { id: id } });
-
-    const user = await User.findByPk(id);
-
-    const image = auto.img;
-
-    return {
-      ...user,
-      user_auto: {
-        brand,
-        model,
-        generation,
-        body_style,
-        img: image,
-      },
-    };
-  }
-
-  static async removeAuto(id) {
-    await User.update({ autoId: null }, { where: { id: id } });
 
     return await User.findByPk(id);
   }

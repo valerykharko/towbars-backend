@@ -6,8 +6,8 @@ export default class BodyStyleController {
   static async create(req, res, next) {
     try {
       const { name, generationId } = req.body;
-      const body_style = await BodyStyle.create({ name, generationId });
-      return res.json(body_style);
+      const bodyStyle = await BodyStyle.create({ name, generationId });
+      return res.json(bodyStyle);
     } catch (e) {
       next(ApiError.BadRequest(e.message));
     }
@@ -29,9 +29,9 @@ export default class BodyStyleController {
 
   static async getOne(req, res) {
     const { id } = req.params;
-    const body_style = await BodyStyle.findOne({
+    const bodyStyle = await BodyStyle.findOne({
       where: { id },
     });
-    return res.json(body_style);
+    return res.json(bodyStyle);
   }
 }

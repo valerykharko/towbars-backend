@@ -1,29 +1,26 @@
-import { Order } from "../../database/models/models";
+import {Order, User} from "../../database/models/models";
+import mailService from "../mail/mailService";
 
 export default class OrderService {
-  static async createOne(
-    items,
-    totalPrice,
-    totalCount,
-    firstName,
-    secondName,
-    phoneNumber,
-    id
-  ) {
+  static async createOne(items, userData, totalPrice, totalCount, id) {
     const result = [];
     for (const key in items) {
       result.push(items[key]);
     }
-    return await Order.create({
+
+    const order = await Order.create({
       items: result,
-      status: "Новый заказ",
       totalPrice,
       totalCount,
-      firstName,
-      secondName,
-      phoneNumber,
+      userData,
       userId: id,
     });
+
+    const user = await User.findByPk(order.userId)
+
+    await mailService.sendOrderRequest(order, user);
+
+    return order;
   }
 
   static async getAllOrders() {

@@ -5,7 +5,8 @@ import checkRole from "../../../middlewares/checkRoleMiddleware";
 const router = express.Router();
 
 router.post("/", checkRole("ADMIN"), modelController.create);
+router.get("/:id", checkRole("ADMIN"), modelController.getOne);
+router.patch("/:id", checkRole("ADMIN"), modelController.patchOne);
 router.get("/", modelController.getAll);
-router.get("/:id", modelController.getOne);
 
 export default router;
