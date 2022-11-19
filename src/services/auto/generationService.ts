@@ -3,12 +3,10 @@ import { Generation } from "../../database/models/models";
 
 export default class GenerationService {
   static async getAllGenerations(modelId) {
-    return modelId
-      ? await Generation.findAll({
-          where: { modelId, visible: true },
-          order: [sequelize.literal("id ASC")],
-        })
-      : await Generation.findAll({ order: [sequelize.literal("id ASC")] });
+    return await Generation.findAll({
+      where: { modelId, visible: true },
+      order: [sequelize.literal("id ASC")],
+    });
   }
 
   static async getGenerationById(id) {
