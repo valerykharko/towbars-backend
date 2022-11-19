@@ -1,8 +1,7 @@
 import path from "path";
 import { Towbar } from "../../database/models/models";
-import ApiError from "../../errors/ApiError";
 import TowbarService from "../../services/catalog/towbarService";
-import generationService from "../../services/auto/generationService";
+import ApiError from "../../errors/ApiError";
 
 export default class TowbarController {
   static async create(req, res, next) {
@@ -93,7 +92,6 @@ export default class TowbarController {
   static async patchAllPrice(req, res, next) {
     try {
       const { payload } = req.body;
-      console.log(payload)
       const towbars = await TowbarService.editAllTowbarsPrice(payload);
       return res.json(towbars);
     } catch (e) {

@@ -87,33 +87,25 @@ export default class TowbarService {
   }
 
   static async editAllTowbarsPrice(payload) {
-    try {
-      const count = Number(payload);
+    const count = Number(payload);
 
-      await Towbar.update(
-        {
-          price: sequelize.fn(
-            "ROUND",
-            sequelize.literal(`price * ${count}`),
-            -2
-          ),
-        },
-        {
-          where: {
-            id: {
-              [Op.gt]: 0,
-            },
+    await Towbar.update(
+      {
+        price: sequelize.fn("ROUND", sequelize.literal(`price * ${count}`), -2),
+      },
+      {
+        where: {
+          id: {
+            [Op.gt]: 0,
           },
-        }
-      );
+        },
+      }
+    );
 
-      return await Towbar.findAll({
-        where: { visible: true },
-        order: [sequelize.literal("price DESC")],
-        limit: 10,
-      });
-    } catch (e) {
-      console.log(e);
-    }
+    return await Towbar.findAll({
+      where: { visible: true },
+      order: [sequelize.literal("price DESC")],
+      limit: 10,
+    });
   }
 }

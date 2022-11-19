@@ -8,6 +8,7 @@ const router = express.Router();
 router.post("/", authMiddleware, orderController.create);
 router.get("/all", checkRole("ADMIN"), orderController.getAll);
 router.get("/byUser", authMiddleware, orderController.getAllByUser);
-router.get("/:id", orderController.getOne);
+router.get("/:id", checkRole("ADMIN"), orderController.getOne);
+router.patch("/:id", checkRole("ADMIN"), orderController.editOne);
 
 export default router;
