@@ -47,9 +47,9 @@ export const Order: any = sequelize.define("order", {
 
 export const Basket: any = sequelize.define("basket", {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
-  items: { type: DataTypes.ARRAY(Sequelize.JSON), allowNull: false },
-  totalPrice: { type: DataTypes.INTEGER, allowNull: false },
-  totalCount: { type: DataTypes.INTEGER, allowNull: false },
+  items: { type: DataTypes.ARRAY(Sequelize.JSON), allowNull: true },
+  totalPrice: { type: DataTypes.INTEGER, allowNull: true },
+  totalCount: { type: DataTypes.INTEGER, allowNull: true },
 });
 
 export const Towbar: any = sequelize.define("towbar", {
@@ -94,8 +94,8 @@ export const Model: any = sequelize.define("model", {
 export const Generation: any = sequelize.define("generation", {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
   name: { type: DataTypes.STRING, allowNull: false },
-  year_of_issue: { type: DataTypes.STRING, allowNull: false },
-  visible: { type: DataTypes.BOOLEAN, allowNull: false },
+  year_of_issue: { type: DataTypes.STRING, allowNull: true },
+  visible: { type: DataTypes.BOOLEAN, allowNull: true },
 });
 
 export const BodyStyle: any = sequelize.define("body_style", {
