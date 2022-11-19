@@ -17,7 +17,7 @@ server.use(cookieParser());
 server.use(
   cors({
     credentials: true,
-    origin: [process.env.CLIENT_URL],
+    origin: [process.env.CLIENT_URL, process.env.CLIENT_URL1, process.env.CLIENT_URL2],
   })
 );
 server.use(express.urlencoded({ extended: false }));
