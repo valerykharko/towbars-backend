@@ -18,9 +18,9 @@ server.use(
   cors({
     credentials: true,
     origin: [
-      process.env.CLIENT_URL1,
-      process.env.CLIENT_URL2,
-      process.env.CLIENT_URL,
+      "http://xn----8sbwhdycfgriq6h.xn--80adxhks",
+      "http://www.xn----8sbwhdycfgriq6h.xn--80adxhks",
+      "http://localhost",
     ],
   })
 );
