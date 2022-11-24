@@ -18,5 +18,7 @@ router.get("/refresh", userController.refresh);
 router.get("/isValid", userController.isValidToken);
 router.get("/isAdmin", userController.isAdmin);
 router.patch("/user", authMiddleware, userController.editUser);
+router.post("/logs", userController.createLog);
+router.get("/logs", userController.getAllLogs);
 
 export default router;

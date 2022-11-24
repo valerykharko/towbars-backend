@@ -26,8 +26,7 @@ export default class UserController {
       });
       return res.json(userData);
     } catch (e) {
-      console.log(e);
-      next(e);
+      next(ApiError.BadRequest(e.message));
     }
   }
 
@@ -45,8 +44,7 @@ export default class UserController {
       });
       return res.json(userData);
     } catch (e) {
-      console.log(e);
-      next(e);
+      next(ApiError.BadRequest(e.message));
     }
   }
 
@@ -61,7 +59,7 @@ export default class UserController {
       res.clearCookie("refreshToken");
       return res.json(token);
     } catch (e) {
-      next(e);
+      next(ApiError.BadRequest(e.message));
     }
   }
 
@@ -75,8 +73,7 @@ export default class UserController {
       await userService.activate(activationLink);
       return res.redirect(process.env.CLIENT_URL);
     } catch (e) {
-      console.log(e);
-      next(e);
+      next(ApiError.BadRequest(e.message));
     }
   }
 
@@ -94,8 +91,7 @@ export default class UserController {
       });
       return res.json(userData);
     } catch (e) {
-      console.log(e);
-      next(e);
+      next(ApiError.BadRequest(e.message));
     }
   }
 
@@ -108,7 +104,7 @@ export default class UserController {
       const users = await userService.getAllUsers();
       return res.json(users);
     } catch (e) {
-      next(e);
+      next(ApiError.BadRequest(e.message));
     }
   }
 
@@ -132,8 +128,7 @@ export default class UserController {
       );
       return res.json(isValid);
     } catch (e) {
-      console.log(e);
-      next(e);
+      next(ApiError.BadRequest(e.message));
     }
   }
 
@@ -154,7 +149,7 @@ export default class UserController {
       const isAdmin = await userService.isAdminToken(userData.id, refreshToken);
       return res.json(isAdmin);
     } catch (e) {
-      next(e);
+      next(ApiError.BadRequest(e.message));
     }
   }
 
@@ -179,8 +174,42 @@ export default class UserController {
       );
       return res.json(user);
     } catch (e) {
-      console.log(e);
-      next(e);
+      next(ApiError.BadRequest(e.message));
+    }
+  }
+
+  static async getAllLogs(
+    req: express.Request,
+    res: express.Response,
+    next: express.NextFunction
+  ) {
+    try {
+      const logs = await userService.getLogs();
+      return res.json(logs);
+    } catch (e) {
+      next(ApiError.BadRequest(e.message));
+    }
+  }
+
+  static async createLog(
+    req: express.Request,
+    res: express.Response,
+    next: express.NextFunction
+  ) {
+    try {
+      const { type, payload, location } = req.body;
+
+      let userId;
+      if (req.headers.authorization) {
+        const token = req.headers.authorization.split(" ")[1];
+        const { id } = jwt.verify(token, process.env.JWT_ACCESS_SECRET);
+        userId = id;
+      }
+
+      await userService.createLog(type, payload, location, userId);
+      return res.json();
+    } catch (e) {
+      next(ApiError.BadRequest(e.message));
     }
   }
 }

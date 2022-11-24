@@ -112,6 +112,15 @@ export const Manufacturer: any = sequelize.define("manufacturer", {
   description: { type: DataTypes.STRING(3000), allowNull: true },
 });
 
+export const Logs: any = sequelize.define("log", {
+  id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
+  type: { type: DataTypes.INTEGER, allowNull: false },
+  value: { type: DataTypes.JSON, allowNull: true },
+  date: { type: DataTypes.DATE, allowNull: false, defaultValue: Date.now() },
+  user: { type: DataTypes.JSON, allowNull: true },
+  location: { type: DataTypes.JSON, allowNull: true },
+});
+
 User.hasOne(Token);
 Token.belongsTo(User);
 
