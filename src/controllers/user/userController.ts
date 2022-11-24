@@ -200,7 +200,7 @@ export default class UserController {
       const { type, payload, location } = req.body;
 
       let userId;
-      if (req.headers.authorization) {
+      if (req.headers.authorization.split(" ")[1] !== "null") {
         const token = req.headers.authorization.split(" ")[1];
         const { id } = jwt.verify(token, process.env.JWT_ACCESS_SECRET);
         userId = id;
