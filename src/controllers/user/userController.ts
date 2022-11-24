@@ -178,38 +178,5 @@ export default class UserController {
     }
   }
 
-  static async getAllLogs(
-    req: express.Request,
-    res: express.Response,
-    next: express.NextFunction
-  ) {
-    try {
-      const logs = await userService.getLogs();
-      return res.json(logs);
-    } catch (e) {
-      next(ApiError.BadRequest(e.message));
-    }
-  }
 
-  static async createLog(
-    req: express.Request,
-    res: express.Response,
-    next: express.NextFunction
-  ) {
-    try {
-      const { type, payload, location } = req.body;
-
-      let userId;
-      if (req.headers.authorization.split(" ")[1] !== "null") {
-        const token = req.headers.authorization.split(" ")[1];
-        const { id } = jwt.verify(token, process.env.JWT_ACCESS_SECRET);
-        userId = id;
-      }
-
-      await userService.createLog(type, payload, location, userId);
-      return res.json();
-    } catch (e) {
-      next(ApiError.BadRequest(e.message));
-    }
-  }
 }

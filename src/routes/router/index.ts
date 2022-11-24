@@ -9,3 +9,4 @@ export { default as manufacturerRouter } from "./manufacturer/manufacturerRouter
 export { default as orderRouter } from "./order/orderRouter";
 export { default as mailRouter } from "./mail/mailRouter";
 export { default as statisticsRouter } from "./statistics/statisticsRouter";
+export { default as loggerRouter } from "./logger/loggerRouter";

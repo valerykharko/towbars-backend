@@ -11,6 +11,7 @@ import {
   orderRouter,
   mailRouter,
   statisticsRouter,
+  loggerRouter,
 } from "./router";
 
 const router = express.Router();
@@ -26,5 +27,6 @@ router.use("/autos", autoRouter);
 router.use("/orders", orderRouter);
 router.use("/mails", mailRouter);
 router.use("/statistics", statisticsRouter);
+router.use("/logs", loggerRouter);
 
 export default router;
